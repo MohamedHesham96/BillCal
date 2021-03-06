@@ -16,13 +16,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     List<EditText> nList = new ArrayList<>();
-
     List<EditText> tList = new ArrayList<>();
-
     List<EditText> qList = new ArrayList<>();
-
     List<EditText> dList = new ArrayList<>();
-
     List<TextView> tvList = new ArrayList<>();
 
     TextView totalBeforeDiscountTV;
