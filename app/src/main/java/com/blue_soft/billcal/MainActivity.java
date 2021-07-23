@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         addListeners();
     }
 
-
     private void initialize() {
 
         totalBeforeDiscountTV = findViewById(R.id.totalBeforeDiscount);
@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         nList.add(findViewById(R.id.n8));
         nList.add(findViewById(R.id.n9));
         nList.add(findViewById(R.id.n10));
+        nList.add(findViewById(R.id.n11));
+        nList.add(findViewById(R.id.n12));
 
         tList.add(findViewById(R.id.t1));
         tList.add(findViewById(R.id.t2));
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         tList.add(findViewById(R.id.t8));
         tList.add(findViewById(R.id.t9));
         tList.add(findViewById(R.id.t10));
+        tList.add(findViewById(R.id.t11));
+        tList.add(findViewById(R.id.t12));
 
         qList.add(findViewById(R.id.q1));
         qList.add(findViewById(R.id.q2));
@@ -74,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         qList.add(findViewById(R.id.q8));
         qList.add(findViewById(R.id.q9));
         qList.add(findViewById(R.id.q10));
+        qList.add(findViewById(R.id.q11));
+        qList.add(findViewById(R.id.q12));
 
         dList.add(findViewById(R.id.d1));
         dList.add(findViewById(R.id.d2));
@@ -85,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         dList.add(findViewById(R.id.d8));
         dList.add(findViewById(R.id.d9));
         dList.add(findViewById(R.id.d10));
+        dList.add(findViewById(R.id.d11));
+        dList.add(findViewById(R.id.d12));
 
         tvList.add(findViewById(R.id.v1));
         tvList.add(findViewById(R.id.v2));
@@ -96,19 +104,19 @@ public class MainActivity extends AppCompatActivity {
         tvList.add(findViewById(R.id.v8));
         tvList.add(findViewById(R.id.v9));
         tvList.add(findViewById(R.id.v10));
+        tvList.add(findViewById(R.id.v11));
+        tvList.add(findViewById(R.id.v12));
 
-        for (int i = 0; i <= 9; i++) {
+        for (int i = 0; i < tvList.size(); i++) {
 
             SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
             nList.get(i).setText(sharedPreferences.getString("n" + i, ""));
             tList.get(i).setText(sharedPreferences.getString("t" + i, ""));
             dList.get(i).setText(sharedPreferences.getString("d" + i, ""));
-
+            qList.get(i).setText(sharedPreferences.getString("q" + i, ""));
         }
-
     }
-
 
     public void addListeners() {
 
@@ -122,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
         qList.get(7).addTextChangedListener(new PriceMethods(7));
         qList.get(8).addTextChangedListener(new PriceMethods(8));
         qList.get(9).addTextChangedListener(new PriceMethods(9));
+        qList.get(10).addTextChangedListener(new PriceMethods(10));
+        qList.get(11).addTextChangedListener(new PriceMethods(11));
 
         dList.get(0).addTextChangedListener(new PriceMethods(0));
         dList.get(1).addTextChangedListener(new PriceMethods(1));
@@ -133,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
         dList.get(7).addTextChangedListener(new PriceMethods(7));
         dList.get(8).addTextChangedListener(new PriceMethods(8));
         dList.get(9).addTextChangedListener(new PriceMethods(9));
-
+        dList.get(10).addTextChangedListener(new PriceMethods(10));
+        dList.get(11).addTextChangedListener(new PriceMethods(11));
     }
 
     public float getBillTotalBeforeDiscount() {
@@ -156,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
         return totalBeforeDiscount;
     }
 
-
     public float getBillTotalAfterDiscount() {
 
         float totalAfterDiscount = 0;
@@ -171,19 +181,31 @@ public class MainActivity extends AppCompatActivity {
         return totalAfterDiscount;
     }
 
-
     public void newBill(View view) {
 
         SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        for (int i = 0; i <= 9; i++) {
+        for (int i = 0; i < nList.size(); i++) {
 
             qList.get(i).setText("");
 
             editor.putString("n" + i, nList.get(i).getText().toString());
             editor.putString("t" + i, tList.get(i).getText().toString());
             editor.putString("d" + i, dList.get(i).getText().toString());
+        }
+
+        editor.commit();
+    }
+
+    public void saveQuantities() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        for (int i = 0; i < qList.size(); i++) {
+
+            editor.putString("q" + i, qList.get(i).getText().toString());
         }
 
         editor.commit();
@@ -216,19 +238,28 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            EditText quantityET = qList.get(this.index);
+            EditText discountET = dList.get(this.index);
 
             String totalTemp = tList.get(this.index).getText().toString();
-            String quantityTemp = qList.get(this.index).getText().toString();
-            String discountTemp = dList.get(this.index).getText().toString();
+            String quantityTemp = quantityET.getText().toString();
+            String discountTemp = discountET.getText().toString();
 
-            Float quantityVal = checkFloatValues(quantityTemp);
             Float totalVal = checkFloatValues(totalTemp);
+            Float quantityVal = checkFloatValues(quantityTemp);
             Float discountVal = checkFloatValues(discountTemp);
+
+            if (s.toString().equals(".")) {
+                EditText editText = (EditText) getCurrentFocus();
+                editText.removeTextChangedListener(this);
+                editText.setText("0.");
+                editText.addTextChangedListener(this);
+                editText.setSelection(editText.getText().length());
+            }
 
             float totalFloatValue = totalVal * quantityVal - (quantityVal * discountVal);
 
@@ -249,15 +280,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-
-
         }
-
 
     }
 
     private float checkFloatValues(String floatAsString) {
-
+        if (floatAsString.equals(".")) {
+            return 0;
+        }
         return floatAsString.equals("") ? 0 : Float.parseFloat(floatAsString);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveQuantities();
     }
 }
